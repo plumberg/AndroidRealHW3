@@ -10,11 +10,21 @@ import android.widget.Button;
 
 public class GridGameAdapter  extends RecyclerView.Adapter<GridGameAdapter.ViewHolder>{
     private boolean [] mSquares;
-    private static int DEFAUL_ELEMENTS = 16;
+    private static int DEFAULT_ELEMENTS = 16;
 
 
-    public GridGameAdapter(){
-        mSquares = new boolean[16];
+    public GridGameAdapter() throws IllegalAccessException {
+       // mSquares = new boolean[16];
+        this(DEFAULT_ELEMENTS);
+
+    }
+    public GridGameAdapter(int elements) throws IllegalAccessException {
+        if(elements % Math.sqrt(elements)==0){
+            mSquares=new boolean[elements];
+        }
+        else{
+            throw new IllegalAccessException("Number of Squares must allow for a perfect square board");
+        }
 
     }
 

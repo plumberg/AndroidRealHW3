@@ -9,25 +9,40 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-   private GridGameAdapter objGridGameAdapter;
+   private GridGameAdapter mObjGridGameAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupBoard();
+        try {
+            setupBoard();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setupBoard(){
+    public void setupBoard() throws IllegalAccessException {
+        int squares = 64;
+        int rows =  (int)(squares/Math.sqrt(squares));
+
         RecyclerView objRecyclerView = (RecyclerView) findViewById (R.id.recycler_view);
         objRecyclerView.setHasFixedSize (true);
-        RecyclerView.LayoutManager objLayoutManager = new GridLayoutManager(this, 4); // cols/rows
-        GridGameAdapter objGridGameAdapter = new GridGameAdapter ();
+
+        RecyclerView.LayoutManager objLayoutManager = new GridLayoutManager(this, rows); // cols/rows
+        objLayoutManager.setAutoMeasureEnabled(true);
+
+        try {
+            mObjGridGameAdapter = new GridGameAdapter (squares);
+        } catch (IllegalAccessException e) {
+            throw new IllegalAccessException("Number of Squares must allow for a perfect square board");
+        }
+        // GridGameAdapter objGridGameAdapter = new GridGameAdapter ();
         // put all three objects together
         objRecyclerView.setLayoutManager (objLayoutManager);
-        objRecyclerView.setAdapter(objGridGameAdapter);
+        objRecyclerView.setAdapter(mObjGridGameAdapter);
 
-        objGridGameAdapter = new GridGameAdapter ();
+
     }
 
     public void buttonHandler (View view)
