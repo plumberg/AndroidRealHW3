@@ -18,7 +18,6 @@ public class GridGameAdapter  extends RecyclerView.Adapter<GridGameAdapter.ViewH
     private int mElements, mWinningNumber;
     private Random mGenerator;
 
-
     public GridGameAdapter()  {
        // mSquares = new boolean[16];
         this(DEFAULT_ELEMENTS);
@@ -49,12 +48,14 @@ public class GridGameAdapter  extends RecyclerView.Adapter<GridGameAdapter.ViewH
     }
 
     public void startGame() {
-        mWinningNumber = mGenerator.nextInt (mElements);
-        mSquares[mWinningNumber] = true;
+       // mWinningNumber = mGenerator.nextInt (mElements);
+       // mSquares[mWinningNumber] = true;
+        startGameWith(mGenerator.nextInt(mElements));
     }
 
     public void startNewGame(){
-        mSquares[mWinningNumber] = false;
+        //mSquares[mWinningNumber] = false;
+        endCurrentGame();
         startGame ();
     }
 
@@ -83,5 +84,26 @@ public class GridGameAdapter  extends RecyclerView.Adapter<GridGameAdapter.ViewH
             super(itemView);
             mButton = itemView.findViewById (R.id.button);
         }
+    }
+
+    public void overwriteWinningNumber(int newWinningNumber){
+        if(newWinningNumber >=0 && newWinningNumber<mSquares.length){
+            endCurrentGame();
+            startGameWith(newWinningNumber);
+        }else{
+            throw new IllegalArgumentException("This numberis not valid winner");
+        }
+
+    }
+
+    private void endCurrentGame() {
+        mSquares[mWinningNumber]=false;
+
+    }
+
+    private void startGameWith(int winningNumber) {
+        mWinningNumber = winningNumber;
+        mSquares[mWinningNumber]=true;
+
     }
 }
