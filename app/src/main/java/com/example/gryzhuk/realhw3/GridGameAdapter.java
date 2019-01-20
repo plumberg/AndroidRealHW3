@@ -2,30 +2,60 @@ package com.example.gryzhuk.realhw3;
 
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Random;
 
 public class GridGameAdapter  extends RecyclerView.Adapter<GridGameAdapter.ViewHolder>{
     private boolean [] mSquares;
     private static int DEFAULT_ELEMENTS = 16;
+    private int mElements, mWinningNumber;
+    private Random mGenerator;
 
 
-    public GridGameAdapter() throws IllegalAccessException {
+    public GridGameAdapter()  {
        // mSquares = new boolean[16];
         this(DEFAULT_ELEMENTS);
 
     }
-    public GridGameAdapter(int elements) throws IllegalAccessException {
-        if(elements % Math.sqrt(elements)==0){
-            mSquares=new boolean[elements];
-        }
-        else{
-            throw new IllegalAccessException("Number of Squares must allow for a perfect square board");
-        }
+    public GridGameAdapter(int elements)  {
+        mElements = elements;
+        mGenerator = new Random();
 
+
+        //if(elements % Math.sqrt(elements)==0){
+            mSquares=new boolean[elements];
+      //  }
+       // else{
+        //    Toast.makeText(,"Number of Squares must allow for a perfect square board",Toast.LENGTH_SHORT);
+       // }
+        startGame();
+    }
+
+    public int getWinningNumber ()
+    {
+        return mWinningNumber;
+    }
+
+    public boolean isWinner (int elementNumber)
+    {
+        return mSquares[elementNumber];
+    }
+
+    public void startGame() {
+        mWinningNumber = mGenerator.nextInt (mElements);
+        mSquares[mWinningNumber] = true;
+    }
+
+    public void startNewGame(){
+        mSquares[mWinningNumber] = false;
+        startGame ();
     }
 
     @NonNull

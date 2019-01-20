@@ -5,38 +5,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
    private GridGameAdapter mObjGridGameAdapter;
+   private int mTurnsClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
+        mTurnsClicked=0;
             setupBoard();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+
+
     }
 
-    public void setupBoard() throws IllegalAccessException {
-        int squares = 64;
+    public void setupBoard()  {
+        int squares = 4;
         int rows =  (int)(squares/Math.sqrt(squares));
 
         RecyclerView objRecyclerView = (RecyclerView) findViewById (R.id.recycler_view);
         objRecyclerView.setHasFixedSize (true);
 
         RecyclerView.LayoutManager objLayoutManager = new GridLayoutManager(this, rows); // cols/rows
-        objLayoutManager.setAutoMeasureEnabled(true);
+       // objLayoutManager.setAutoMeasureEnabled(true);
 
-        try {
             mObjGridGameAdapter = new GridGameAdapter (squares);
-        } catch (IllegalAccessException e) {
-            throw new IllegalAccessException("Number of Squares must allow for a perfect square board");
-        }
+
         // GridGameAdapter objGridGameAdapter = new GridGameAdapter ();
         // put all three objects together
         objRecyclerView.setLayoutManager (objLayoutManager);
@@ -45,12 +45,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void buttonHandler (View view)
-    {
-        View sbContainer = findViewById (R.id.activity_main); // this is the CoordinatorLayout above
-        Button currentButton = (Button) view;
-        String msg = "You clicked on " + currentButton.getText ().toString ();
+    public void buttonHandler (View view) {
+        showGuessResults((Button) view);
+        incrementGuessesCounterAndUpdateStatusBar();
+    }
+
+    private void showGuessResults(Button view) {
+        View sbContainer = findViewById(R.id.activity_main);
+
+        String currentText =view.getText().toString();
+        int currentElement = Integer.parseInt(currentText);
+
+        mTurnsClicked+=1;
+        String msg = "You clicked on " + currentText + ".\n";
+        msg+= mObjGridGameAdapter.isWinner(currentElement) ?
+                "This is the winning number!" : "Please try a different number.";
         Snackbar.make (sbContainer, msg, Snackbar.LENGTH_SHORT).show ();
     }
 
+    private void incrementGuessesCounterAndUpdateStatusBar() {
+        TextView tvStatusBar = findViewById(R.id.status_bar);
+        tvStatusBar.setText(getString(R.string.guesses_taken)+ mTurnsClicked);
+    }
+
+    public void newGame(MenuItem item) {
+        mObjGridGameAdapter.startNewGame();
+
+        mTurnsClicked =0;
+        incrementGuessesCounterAndUpdateStatusBar();
+
+        View sbContainer = findViewById(R.id.activity_main);
+        Snackbar.make(sbContainer,"Welcome to a New Game!",Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    public void overwriteWinningNumber(int newWinningNumber){
+
+    }
 }
